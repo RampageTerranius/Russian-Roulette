@@ -111,7 +111,11 @@ void Engine::GetInput()
 	{
 		FireAtSelf();
 	}
-	else 
+	else  if (input == "3")
+	{
+		running = false;
+	}
+	else
 	{
 		cout << "Invalid input" << endl;
 	}
