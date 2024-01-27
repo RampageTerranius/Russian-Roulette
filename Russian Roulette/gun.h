@@ -3,48 +3,52 @@
 
 using namespace std;
 
-#include <queue>
+#include <deque>
 #include <random>
 #include <iostream>
+#include <algorithm>
 
 // A gun, is used by the dealer and the player as part of the game to either shoot themselves or the opposite user
 class Gun
 {
 	public:
-		bool LoadRound(int total);
+		void LoadGun(int liveShells, int blankShells);
 		bool Fire();
 
 	private:
-		queue<bool> clip;
-		int clipMaxSize = 7;
+		deque<bool> clip;
 };
 
-// Loads rounds randomly into the gun.
-// Return true if able to load a shell, false if unable(gun is full).
-bool Gun::LoadRound(int total)
+
+// Fully loads the gun with random rounds.
+void Gun::LoadGun(int liveShells, int blankShells)
 {
-	if (clip.size() >= clipMaxSize)
+	while (clip.size() > 0)
 	{
-		cout << "The gun is already full";
-		return false;
+		clip.pop_front();
 	}
 
-	// Create a random device for seeding first.
+	for (int i = 0; i < liveShells; i++)
+	{
+		clip.push_front(true);
+	}
+
+	for (int i = 0; i < blankShells; i++)
+	{
+		clip.push_front(false);
+	}
+
+	// Create a random device for seeding.
 	random_device rd;
 
 	// Specify to make our device a Mersenne Twister random number engine.
 	mt19937 gen(rd());
 
-	// Setup a uniform distribution for either 0 or 1
-	std::uniform_int_distribution<> distribution(0, 1);
+	shuffle(clip.begin(), clip.end(), gen);
 
-	for (int i = 0; i < total; i++)
-	{
-		clip.push(distribution(gen));
-	}	
-
-	return true;
+	cout << "The dealer shows " << liveShells << " live  and " << blankShells << " blank shells, they are inserted in an unknown order...";
 }
+
 
 // Fire the weapon.
 // Return true if the bullet fired was live, false if it was a blank.
@@ -56,7 +60,7 @@ bool Gun::Fire()
 	}
 
 	bool wasLiveRound = clip.front();
-	clip.pop();
+	clip.pop_front();
 
 	return wasLiveRound;
 }

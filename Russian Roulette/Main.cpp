@@ -3,12 +3,7 @@
 int main(int argc, char* argv[])
 {
     Engine engine;
-
-    engine.initialize();
-
-    engine.gameLoop();
-
-    engine.shutdown();
+    engine.GameLoop();
 
     return engine.ReturnState();
 }
