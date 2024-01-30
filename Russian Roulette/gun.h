@@ -14,6 +14,8 @@ class Gun
 	public:
 		void LoadGun(int liveShells, int blankShells);
 		bool Fire();
+		double LiveRoundProbability();
+		bool isEmpty();
 
 	private:
 		deque<bool> clip;
@@ -46,7 +48,7 @@ void Gun::LoadGun(int liveShells, int blankShells)
 
 	shuffle(clip.begin(), clip.end(), gen);
 
-	cout << "The dealer shows " << liveShells << " live and " << blankShells << " blank shells, they are inserted in an unknown order..." << endl;;
+	cout << "--||The dealer shows " << liveShells << " live and " << blankShells << " blank shells, they are inserted in an unknown order||--" << endl;;
 }
 
 
@@ -64,5 +66,32 @@ bool Gun::Fire()
 
 	return wasLiveRound;
 }
+
+// Return the probability that the next shell is live.
+double Gun::LiveRoundProbability()
+{
+	int liveRounds = 0;
+	for (int i = 0; i < clip.size(); i++)
+	{
+		if (clip[i] == true)
+		{
+			liveRounds++;
+		}
+	}
+
+	return ((double)liveRounds / clip.size());
+}
+
+// Check if the gun is empty or not.
+// Return true if empty, false if it still has rounds.
+bool Gun::isEmpty()
+{
+	if (clip.size() == 0)
+	{
+		return true;
+	}
+
+	return false;
+};
 
 #endif

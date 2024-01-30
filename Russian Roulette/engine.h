@@ -98,7 +98,13 @@ void Engine::ProcessGameLogic()
 		case TurnResult::closeGame:
 			running = false;
 			break;
-	}	
+	}
+
+	// Check if gun needs to be reloaded.
+	if (gun.isEmpty())
+	{
+		gun.LoadGun(2, 5);
+	}
 }
 
 // Primary game loop, does initialization and shutdown as well.
