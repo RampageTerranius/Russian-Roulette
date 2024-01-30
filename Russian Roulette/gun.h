@@ -46,7 +46,7 @@ void Gun::LoadGun(int liveShells, int blankShells)
 
 	shuffle(clip.begin(), clip.end(), gen);
 
-	cout << "The dealer shows " << liveShells << " live  and " << blankShells << " blank shells, they are inserted in an unknown order...";
+	cout << "The dealer shows " << liveShells << " live and " << blankShells << " blank shells, they are inserted in an unknown order..." << endl;;
 }
 
 

@@ -6,23 +6,17 @@
 
 #include "gun.h"
 #include "player.h"
+#include "turnResult.h"
 
 class Engine
 {
 public:
 	// Shutdown and startup functions.
 	void Initialize();
-	void Shutdown();
 
 	// General engine functions.
 	void GameLoop();
-	void GetInput();
 	void ProcessGameLogic();
-	void Render();
-
-	// Gun firing functions.
-	void FireAtSelf();
-	void FireAtOpponent();
 
 	int ReturnState() { return returnState; }
 
@@ -32,93 +26,79 @@ private:
 	bool running = false;
 	Gun gun;
 	bool turn = false;
-	Player players[2];
+	shared_ptr <Player> players[2];
 };
 
 void Engine::Initialize()
 {
 	running = true;
 	gun.LoadGun(2, 5);
-}
 
-void Engine::Shutdown()
-{
-
-}
-
-void Engine::Render()
-{
-	cout << "Player 1 HP: " << players[0].Health() << " Player 2 HP: " << players[1].Health() << endl
-		 << "What is your action?" << endl
-		 << "1: Fire gun at opponent" << endl
-		 << "2: Fire gun at self" << endl
-		 << "3: Quit game" << endl;
+	players[0] = make_shared<Player_Human>();
+	players[1] = make_shared<Player_AI>();
 }
 
 void Engine::ProcessGameLogic()
 {
+	cout << endl;
 
-}
-
-// Fire gun at self.
-void Engine::FireAtSelf()
-{
-	cout << "You aim the gun at yourself..." << endl
-		 << "Click!" << endl;
-
-	bool tookBullet = gun.Fire();
-
-	if (tookBullet) 
+	if (!turn)
 	{
-		cout << "BANG!... You have hit yourself" << endl;
-		players[turn].TakeDamage();
+		cout << "Player 1 HP: " << players[0]->Health() << " Player 2 HP: " << players[1]->Health() << endl
+			 << "What is your action?" << endl
+			 << "1: Fire gun at opponent" << endl
+			 << "2: Fire gun at self" << endl
+			 << "3: Quit game" << endl;
 	}
-	else
-	{
-		cout << "Nothing..." << endl;
-	}
-}
 
-// Fire gun at opponent
-void Engine::FireAtOpponent()
-{
-	cout << "You aim the gun at your opponent..." << endl
-		<< "Click!" << endl;
 
-	bool tookBullet = gun.Fire();
+	TurnResult turnResult = players[turn]->TakeTurn(&gun);
+	
+	// Process the result of the players turn.
+	switch (turnResult)
+	{
+		case TurnResult::noDamageSelf:
+			cout << "Nothing... the player gets another turn" << endl;
+			break;
 
-	if (tookBullet)
-	{
-		cout << "BANG!... You have hit the opponent" << endl;
-		players[!turn].TakeDamage();
-	}
-	else
-	{
-		cout << "Nothing..." << endl;
-	}
-}
+		case TurnResult::noDamageOpponent:
+			cout << "Nothing... the gun is handed to the other player..." << endl;
+			turn = !turn;
+			break;
 
-void Engine::GetInput()
-{
-	string input;
-	cin >> input;
+		case TurnResult::damageOpponent:
+			if (!turn)
+			{
+				cout << "BANG!... You hit the dealer!" << endl;
+			}
+			else
+			{
+				cout << "BANG!... the dealer hits you!" << endl;
+			}
 
-	if (input == "1")
-	{
-		FireAtOpponent();
-	}
-	else if (input == "2")
-	{
-		FireAtSelf();
-	}
-	else  if (input == "3")
-	{
-		running = false;
-	}
-	else
-	{
-		cout << "Invalid input" << endl;
-	}
+			players[!turn]->TakeDamage(1);
+
+			turn = !turn;
+			break;
+
+		case TurnResult::damageSelf:
+			if (!turn)
+			{
+				cout << "BANG!... You have hit yourself" << endl;
+			}
+			else
+			{
+				cout << "BANG!... the dealer hits himself" << endl;
+			}
+
+			players[turn]->TakeDamage(1);
+			turn = !turn;
+			break;
+
+		case TurnResult::closeGame:
+			running = false;
+			break;
+	}	
 }
 
 // Primary game loop, does initialization and shutdown as well.
@@ -128,11 +108,8 @@ void Engine::GameLoop()
 
 	while (running)
 	{
-		Render();
-		GetInput();		
+		ProcessGameLogic();
 	}
-
-	Shutdown();
 }
 
 #endif
