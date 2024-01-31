@@ -118,7 +118,7 @@ TurnResult Player_AI::TakeTurn(Gun *gun)
 	// First lets get the chance the next bulelt will be live;
 	double chanceOfLive = gun->LiveRoundProbability();
 
-	cout << "probabilty of self hit: " << chanceOfLive << endl;
+	cout << "AI probabilty of self hit: " << chanceOfLive << endl;
 
 	// If the AI is aware there is no bullets then shoot at self.
 	if (chanceOfLive == 0)

@@ -11,8 +11,9 @@ using namespace std;
 // A gun, is used by the dealer and the player as part of the game to either shoot themselves or the opposite user
 class Gun
 {
-	public:
+	public:		
 		void LoadGun(int liveShells, int blankShells);
+		void LoadGun();
 		bool Fire();
 		double LiveRoundProbability();
 		bool isEmpty();
@@ -51,6 +52,21 @@ void Gun::LoadGun(int liveShells, int blankShells)
 	cout << "--||The dealer shows " << liveShells << " live and " << blankShells << " blank shells, they are inserted in an unknown order||--" << endl;;
 }
 
+// Fully loads the gun, randomly chooses how many live rounds.
+void Gun::LoadGun()
+{
+	// Create a random device for seeding.
+	random_device rd;
+
+	// Specify to make our device a Mersenne Twister random number engine.
+	mt19937 gen(rd());
+
+	// Setup a uniform distribution for either 1 or 4 then randomly generate a number.
+	std::uniform_int_distribution<> distribution(1, 4);
+	int randomNumber = distribution(gen);
+
+	LoadGun(randomNumber, 7 - randomNumber);
+}
 
 // Fire the weapon.
 // Return true if the bullet fired was live, false if it was a blank.

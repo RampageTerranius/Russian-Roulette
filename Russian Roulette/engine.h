@@ -32,7 +32,7 @@ private:
 void Engine::Initialize()
 {
 	running = true;
-	gun.LoadGun(2, 5);
+	gun.LoadGun();
 
 	players[0] = make_shared<Player_Human>();
 	players[1] = make_shared<Player_AI>();
@@ -103,7 +103,7 @@ void Engine::ProcessGameLogic()
 	// Check if gun needs to be reloaded.
 	if (gun.isEmpty())
 	{
-		gun.LoadGun(2, 5);
+		gun.LoadGun();
 	}
 }
 
