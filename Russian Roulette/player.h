@@ -137,35 +137,22 @@ TurnResult Player_AI::TakeTurn(Gun *gun)
 	}
 
 	// If we are at a high chance to hit then just fire.
-	if (chanceOfLive >= guaranteedFireOpponent)
+	else if (chanceOfLive >= guaranteedFireOpponent)
 	{
 		cout << "The dealer points the gun at you..." << endl;
-		bool wasLive = gun->Fire();
-
-		if (wasLive)
-		{
-			return TurnResult::damageOpponent;
-		}
-		else
-		{
-			return TurnResult::noDamageOpponent;
-		}
+		return gun->Fire()? TurnResult::damageOpponent : TurnResult::noDamageOpponent;
+		
 	}
+
 	// if we are at a low chance to hit then fire at self.
 	else if (chanceOfLive <= guaranteedFireSelf)
 	{
 		cout << "The dealer points the gun at himself..." << endl;
 		bool wasLive = gun->Fire();
 
-		if (wasLive)
-		{
-			return TurnResult::damageSelf;
-		}
-		else
-		{
-			return TurnResult::noDamageSelf;
-		}
+		return gun->Fire()? TurnResult::damageSelf : TurnResult::noDamageSelf;	
 	}
+
 	// Otherwise, flip a coin and determine who we shoot.
 	else
 	{
