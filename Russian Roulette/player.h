@@ -8,15 +8,15 @@ using namespace std;
 #include "turnResult.h"
 #include "gun.h"
 
-
-
+// Base player class.
 class Player
 {
 public:
 	Player();
 	bool TakeDamage(int damage);
 	int Health() { return health; }
-	virtual TurnResult TakeTurn(Gun *gun);
+	virtual TurnResult TakeTurn(Gun *gun) const = 0;
+
 private:
 	int health;
 };
@@ -24,13 +24,6 @@ private:
 Player::Player()
 {
 	health = 4;
-}
-
-// Invalid use of TakeTurn, base class shoudl never be used
-TurnResult Player::TakeTurn(Gun *gun)
-{
-	cout << "Invalid use of TakeTurn(Gun gun), please use a child class instead of Player" << endl;
-	return TurnResult::noDamageOpponent;
 }
 
 // Take damage from a gun shot.
@@ -52,8 +45,7 @@ bool Player::TakeDamage(int damage)
 class Player_Human : public Player
 {
 public:
-	TurnResult TakeTurn(Gun *gun);
-	
+	TurnResult TakeTurn(Gun *gun);	
 };
 
 TurnResult Player_Human::TakeTurn(Gun *gun)
