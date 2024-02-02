@@ -17,6 +17,10 @@ class Gun
 		bool Fire();
 		double LiveRoundProbability();
 		bool isEmpty();
+		bool isNextRoundLive();
+
+		// If the next round should do double damage.
+		bool nextRoundDoubleDamage = false;
 
 	private:
 		deque<bool> clip;
@@ -109,5 +113,12 @@ bool Gun::isEmpty()
 
 	return false;
 };
+
+// Check if the next round is live.
+// Return true if live, false if blank.
+bool Gun::isNextRoundLive()
+{
+	return clip.front();
+}
 
 #endif

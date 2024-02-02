@@ -6,6 +6,7 @@ enum class TurnResult {
 	noDamageSelf,
 	damageOpponent,
 	damageSelf,
+	turnSkipped,
 	closeGame
 };
 

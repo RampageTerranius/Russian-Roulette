@@ -8,23 +8,22 @@ using namespace std;
 #include "turnResult.h"
 #include "gun.h"
 
+class Item;  // Forward declaration
+
 // Base player class.
 class Player
 {
 public:
-	Player();
 	bool TakeDamage(int damage);
+	void HealDamage(int damage);
 	int Health() { return health; }
-	virtual TurnResult TakeTurn(Gun *gun) const = 0;
+	virtual TurnResult TakeTurn(Gun *gun) = 0;
+	bool skipNextTurn = false;
 
 private:
-	int health;
-};
+	int health = 5;
 
-Player::Player()
-{
-	health = 4;
-}
+};
 
 // Take damage from a gun shot.
 // Return true if player is still alive, false if dead.
@@ -42,6 +41,14 @@ bool Player::TakeDamage(int damage)
 	}
 }
 
+// Heal damage.
+// Return true if player is still alive, false if dead.
+void Player::HealDamage(int damage)
+{
+	health += damage;
+}
+
+// Class implementation specifically for a human.
 class Player_Human : public Player
 {
 public:
@@ -50,6 +57,11 @@ public:
 
 TurnResult Player_Human::TakeTurn(Gun *gun)
 {
+	if (skipNextTurn)
+	{
+		return TurnResult::turnSkipped;
+	}
+
 	string input;	
 
 	while (true)
@@ -57,6 +69,7 @@ TurnResult Player_Human::TakeTurn(Gun *gun)
 
 		cin >> input;
 
+		// Shoot at opponent.
 		if (input == "1")
 		{
 			cout << "You aim the gun at the dealer..." << endl;
@@ -69,6 +82,8 @@ TurnResult Player_Human::TakeTurn(Gun *gun)
 				return TurnResult::noDamageOpponent;
 			}
 		}
+
+		// Shoot at self.
 		else if (input == "2")
 		{
 			cout << "You aim the gun at yourself..." << endl;
@@ -81,7 +96,8 @@ TurnResult Player_Human::TakeTurn(Gun *gun)
 				return TurnResult::noDamageSelf;
 			}
 		}
-		else if (input == "3")
+		// Close game.
+		else if (input == "0")
 		{
 			cout << "Closing game..." << endl;
 			return TurnResult::closeGame;
@@ -93,19 +109,28 @@ TurnResult Player_Human::TakeTurn(Gun *gun)
 	}
 }
 
+// Class implementation of palyer specifically for a AI.
 class Player_AI : public Player
 {
 public:
 	TurnResult TakeTurn(Gun *gun);
 
+	bool isAwareOfNextShell = false;
+
 private:
 	// Probability data for determining if AI will fire or not.
 	const double guaranteedFireOpponent = 0.75; // Fire if chance is >= this.
 	const double guaranteedFireSelf = 0.25; // Fire at self if chance is <= this.
+	
 };
 
 TurnResult Player_AI::TakeTurn(Gun *gun)
 {
+	if (skipNextTurn)
+	{
+		return TurnResult::turnSkipped;
+	}
+
 	// Calculate the probability that the AI will fire.
 	// First lets get the chance the next bulelt will be live;
 	double chanceOfLive = gun->LiveRoundProbability();
