@@ -127,15 +127,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Engine.cpp" />
+    <ClCompile Include="Gun.cpp" />
+    <ClCompile Include="Item.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Player.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="engine.h" />
-    <ClInclude Include="gun.h" />
-    <ClInclude Include="item.h" />
+    <ClInclude Include="Engine.h" />
+    <ClInclude Include="Gun.h" />
+    <ClInclude Include="Item.h" />
     <ClInclude Include="turnResult.h" />
     <ClInclude Include="Main.h" />
-    <ClInclude Include="player.h" />
+    <ClInclude Include="Player.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
